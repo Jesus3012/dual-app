@@ -18,8 +18,13 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   return (
     <div>
-      <h1>Panel del tutor interno</h1>
+      <h1>Panel del Tutor Interno</h1>
       <p>Bienvenido al panel del tutor interno.</p>
+
+      <button onClick={() => navigate("/altas")} className="menu-button">
+        Registrar Alta
+      </button>
+
       <button onClick={handleLogout} className="logout-button">
         Cerrar Sesión
       </button>
