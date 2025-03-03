@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 interface Props {
   setUserRole: (role: string | null) => void;
@@ -17,13 +18,20 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   };
 
   return (
-    <div>
-      <h1>Panel del Alumno</h1>
-      <p>Bienvenido al panel del alumno.</p>
-      <button onClick={handleLogout} className="logout-button">
-        Cerrar Sesión
-      </button>
+    <>
+        <Navbar handleLogout={handleLogout} />
+    <div className="container mt-5">
+      <div className="card">
+        <div className="card-header text-center">
+          <h3>Panel del Alumno</h3>
+        </div>
+        <div className="card-body text-center">
+          <p>Bienvenido al panel del alumno.</p>
+          
+        </div>
+      </div>
     </div>
+    </>
   );
 };
 

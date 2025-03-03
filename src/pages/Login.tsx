@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// import "../estilos/Login.css"; 
+import "../estilos/Login.css";  
 
 
 interface Props {
@@ -9,22 +9,22 @@ interface Props {
 }
 
 const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
-  
+
     if (token && role) {
       setUserRole(role);
       setIsAuthenticated(true);
       navigate(`/${role}`); // Redirige al Dashboard correspondiente
     }
-  });
+  }, []);
 
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,30 +77,68 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
   };
 
   return (
-    <div className="login-container">
-      <h2 className="login-title">Iniciar Sesión</h2>
-      {error && <p className="error-message">{error}</p>}
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          required
-          className="input-field"
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="input-field"
-        />
-        <button type="submit" className="login-button">
-          Ingresar
-        </button>
-      </form>
+    
+    <div className="login-page">
+      {/* Contenedor del video de fondo */}
+      <div className="video-background">
+        <video
+          autoPlay
+          loop
+          muted
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -1,
+          }}
+        >
+          <source
+            src="https://cdn.pixabay.com/video/2022/12/14/142931-781314466_large.mp4"
+            type="video/mp4"
+          />
+          Tu navegador no soporta la etiqueta de video.
+        </video>
+      </div>
+
+      {/* Caja de Login */}
+      <div className="login-box">
+        <div className="card">
+          <div className="card-header text-center">
+            <h3 className="login-title">Iniciar Sesión</h3>
+          </div>
+          <div className="card-body">
+            {error && <div className="alert alert-danger">{error}</div>}
+            <form onSubmit={handleLogin}>
+              <div className="input-group mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Usuario"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="input-group mb-3">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn btn-primary btn-block">
+                Ingresar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

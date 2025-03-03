@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 interface Props {
   setUserRole: (role: string | null) => void;
@@ -41,39 +42,67 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
   };
 
   return (
-    <div>
-      <h1>Registrar Usuario</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <label htmlFor="rol">Rol:</label>
-        <select name="rol" value={rol} onChange={(e) => setRol(e.target.value)} required>
-          <option value="Administrador">Administrador</option>
-          <option value="Director">Director</option>
-          <option value="TutorInterno">Tutor Interno</option>
-          <option value="TutorExterno">Tutor Externo</option>
-          <option value="Alumno">Alumno</option>
-          <option value="Vinculación">Vinculación</option>
-        </select>
-        <button type="submit">Registrar Usuario</button>
-      </form>
+    <>
+    <Navbar handleLogout={handleLogout} />
+    <div className="container mt-5">
+      <div className="card">
+        <div className="card-header text-center">
+          <h3>Registrar Usuario</h3>
+        </div>
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="form-group mb-3">
+              <label htmlFor="usuario">Usuario</label>
+              <input
+                type="text"
+                id="usuario"
+                className="form-control"
+                placeholder="Usuario"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label htmlFor="password">Contraseña</label>
+              <input
+                type="password"
+                id="password"
+                className="form-control"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <label htmlFor="rol">Rol</label>
+              <select
+                id="rol"
+                className="form-control"
+                name="rol"
+                value={rol}
+                onChange={(e) => setRol(e.target.value)}
+                required
+              >
+                <option value="Administrador">Administrador</option>
+                <option value="Director">Director</option>
+                <option value="TutorInterno">Tutor Interno</option>
+                <option value="TutorExterno">Tutor Externo</option>
+                <option value="Alumno">Alumno</option>
+                <option value="Vinculación">Vinculación</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary btn-block">
+              Registrar Usuario
+            </button>
+          </form>
 
-      <button onClick={handleLogout} className="logout-button">
-        Cerrar Sesión
-      </button>
+          
+        </div>
+      </div>
     </div>
+    </>
   );
 };
 

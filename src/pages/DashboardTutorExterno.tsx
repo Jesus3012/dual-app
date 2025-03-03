@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 interface Props {
   setUserRole: (role: string | null) => void;
@@ -17,13 +18,25 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   };
 
   return (
-    <div>
-      <h1>Panel del tutor externo</h1>
-      <p>Bienvenido al panel del tutor externo.</p>
-      <button onClick={handleLogout} className="logout-button">
-        Cerrar Sesión
-      </button>
+<>
+    <Navbar handleLogout={handleLogout} />
+
+    <div className="container mt-5">
+      <div className="card">
+        <div className="card-header">
+          <h3>Panel del Tutor Externo</h3>
+        </div>
+        <div className="card-body">
+          <p className="lead">Bienvenido al panel del tutor externo.</p>
+          <p>Aquí podrás gestionar tus actividades y consultar la información relacionada con los estudiantes bajo tu tutoría.</p>
+        </div>
+          
+        <div className="card-footer text-right">
+          
+        </div>
+      </div>
     </div>
+    </>
   );
 };
 

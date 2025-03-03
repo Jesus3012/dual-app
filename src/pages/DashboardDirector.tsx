@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Navbar from '../components/Navbar';
 
 interface Estudiante {
   id: number;
@@ -279,224 +280,426 @@ const DashboardDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
     return <div>{error}</div>;
   }
   return (
-    <div>
-      <h1>Registrar Usuario</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Usuario"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <label htmlFor="rol">Rol:</label>
-          <select
-            name="rol"
-            value={rol}
-            onChange={(e) => setRol(e.target.value)}
-            required
-          >
-            <option value="Administrador">Administrador</option>
-            <option value="Director">Director</option>
-            <option value="tutorInterno">Tutor Interno</option>
-            <option value="tutorExterno">Tutor Externo</option>
-            <option value="Alumno">Alumno</option>
-            <option value="Vinculación">Vinculación</option>
-          </select>
-          <button type="submit">Registrar Usuario</button>
-        </form>
+<>
+<Navbar handleLogout={handleLogout} />    <div className="container">
+<div className="container mt-5">
+  <div className="card">
+        <h1 className="text-center text mb-4">Registrar Usuario</h1>
+        <form onSubmit={handleSubmit} className="mb-4">
+        <div className="form-group mb">
+            <input
+              type="text"
+              placeholder="Usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              className="form-control mb"
+              required
+            />
+            </div>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-control mb-2"
 
-        <h1>Buscar Estudiante</h1>
-      <input
-        type="text"
-        placeholder="Introduce matrícula"
-        value={matriculaBuscada}
-        onChange={(e) => setMatriculaBuscada(e.target.value)}
-      />
-      <button onClick={buscarEstudiante}>Buscar</button>
+              required
+            />
+            <label htmlFor="rol" className="form-label">Rol:</label>
+            <select
+              name="rol"
+              value={rol}
+              onChange={(e) => setRol(e.target.value)}
+              className="form-control mb-2"
+              required
+            >
+              <option value="Administrador">Administrador</option>
+              <option value="Director">Director</option>
+              <option value="tutorInterno">Tutor Interno</option>
+              <option value="tutorExterno">Tutor Externo</option>
+              <option value="Alumno">Alumno</option>
+              <option value="Vinculación">Vinculación</option>
+            </select>
+            <button type="submit" className="btn btn-success btn-block">Registrar Usuario</button>
+          </form>
+          </div> 
+      </div>
+
+      <div className="container mt-4">
+        <div className="card">
+              <h2 className="text-center text-success mb-4">Buscar Estudiante</h2>
+            <div className="form-group mb-4">
+              <input
+                type="text"
+                placeholder="Introduce matrícula"
+                value={matriculaBuscada}
+                onChange={(e) => setMatriculaBuscada(e.target.value)}
+                className="form-control mb-2"
+              />
+              <button onClick={buscarEstudiante} className="btn btn-info btn-block">Buscar Estudiante</button>
+            </div>
+        </div>
+      </div>
 
       {error && <p>{error}</p>}
 
       {estudianteEncontrado && (
-        <div>
-          <h2>Datos del Estudiante</h2>
-          <p><strong>Matricula:</strong> {estudianteEncontrado.matricula}</p>
-          <p><strong>Nombre:</strong> {estudianteEncontrado.nombre}</p>
-          <p><strong>Fecha de Nacimiento:</strong> {estudianteEncontrado.fecha_nacimiento}</p>
-          <p><strong>CURP:</strong> {estudianteEncontrado.curp}</p>
-          <p><strong>Género:</strong> {estudianteEncontrado.genero}</p>
-          <p><strong>División:</strong> {estudianteEncontrado.division}</p>
-          <p><strong>Programa de Estudios:</strong> {estudianteEncontrado.programa_estudios}</p>
-          <p><strong>Seguridad Social:</strong> {estudianteEncontrado.seguridad_social}</p>
-          <p><strong>Status:</strong> {estudianteEncontrado.status}</p>
-          <p><strong>Cuatrimestre:</strong> {estudianteEncontrado.cuatrimestre}</p>
-          <p><strong>Correo Electrónico:</strong> {estudianteEncontrado.correo_electronico}</p>
-          <p><strong>Teléfono:</strong> {estudianteEncontrado.telefono}</p>
-
-          <button onClick={registrarEstudianteEnDuale}>Registrar en BD Dual</button>
+        <div className="container mt-5">
+        <div className="card">
+          <div className="bg-light p-3 rounded mb-4">
+            <h3 className="text-success">Datos del Estudiante</h3>
+            <p><strong>Matrícula:</strong> {estudianteEncontrado.matricula}</p>
+            <p><strong>Nombre:</strong> {estudianteEncontrado.nombre}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {estudianteEncontrado.fecha_nacimiento}</p>
+            <p><strong>CURP:</strong> {estudianteEncontrado.curp}</p>
+            <p><strong>Género:</strong> {estudianteEncontrado.genero}</p>
+            <p><strong>División:</strong> {estudianteEncontrado.division}</p>
+            <p><strong>Programa de Estudios:</strong> {estudianteEncontrado.programa_estudios}</p>
+            <p><strong>Seguridad Social:</strong> {estudianteEncontrado.seguridad_social}</p>
+            <p><strong>Status:</strong> {estudianteEncontrado.status}</p>
+            <p><strong>Cuatrimestre:</strong> {estudianteEncontrado.cuatrimestre}</p>
+            <p><strong>Correo Electrónico:</strong> {estudianteEncontrado.correo_electronico}</p>
+            <p><strong>Teléfono:</strong> {estudianteEncontrado.telefono}</p>
+          </div>
+        </div>
         </div>
       )}
 
-        <h2>Registrar Estudiante</h2>
+
+<div className="container mt-5">
+  <div className="card">
+<h2 className="text-center text-success mb-4">Registrar Estudiante</h2>
       <form onSubmit={registrarEstudiante}>
-        <input type="text" name="matricula" placeholder="Matrícula" value={nuevoEstudiante.matricula} onChange={handleInputChange} required />
-        <input type="text" name="nombre" placeholder="Nombre" value={nuevoEstudiante.nombre} onChange={handleInputChange} required />
-        <input type="email" name="correoElectronico" placeholder="Correo Electrónico" value={nuevoEstudiante.correoElectronico} onChange={handleInputChange} required />
-        <input type="text" name="telefono" placeholder="Teléfono" value={nuevoEstudiante.telefono} onChange={handleInputChange} required />
-        <input type="date" name="fecha_nacimiento" placeholder="Fecha de Nacimiento" value={nuevoEstudiante.fecha_nacimiento} onChange={handleInputChange} />
-        <input type="text" name="curp" placeholder="CURP" value={nuevoEstudiante.curp} onChange={handleInputChange} />
-        <select name="genero" value={nuevoEstudiante.genero} onChange={handleInputChange}>
-          <option value="">Selecciona Género</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Femenino">Femenino</option>
-        </select>
-        <input type="text" name="division" placeholder="División" value={nuevoEstudiante.division} onChange={handleInputChange} />
-        <input type="text" name="programa_estudios" placeholder="Programa de Estudios" value={nuevoEstudiante.programa_estudios} onChange={handleInputChange} />
-        <input type="text" name="seguridad_social" placeholder="Seguridad Social" value={nuevoEstudiante.seguridad_social} onChange={handleInputChange} />
-        <input type="text" name="status" placeholder="Status" value={nuevoEstudiante.status} onChange={handleInputChange} />
-        <input type="number" name="cuatrimestre" placeholder="Cuatrimestre" value={nuevoEstudiante.cuatrimestre ?? ''} onChange={handleInputChange} />
-        <button type="submit">Registrar Estudiante</button>
-      </form>
-      <h2>Lista de Estudiantes en BD Duale</h2>
-        {estudiantes.length > 0 ? (
-          <table border="1">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Matrícula</th>
-                <th>Nombre</th>
-                <th>Correo Electrónico</th>
-                <th>Teléfono</th>
-              </tr>
-            </thead>
-            <tbody>
-              {estudiantes.map((est) => (
-                <tr key={est.id}>
-                  <td>{est.id}</td>
-                  <td>{est.matricula}</td>
-                  <td>{est.nombre}</td>
-                  <td>{est.correoElectronico}</td>
-                  <td>{est.telefono}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No hay estudiantes registrados en BD Duale.</p>
-        )}
-
-      <h2>Registrar Tutor Interno (UTP)</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          registrarTutor();
-        }}
-      >
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre"
-          maxLength={50}
-          value={tutor.nombre}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="id"
-          placeholder="ID"
-          maxLength={5}
-          value={tutor.id}
-          onChange={(e) => setTutor({ ...tutor, id: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          name="telefono"
-          placeholder="Teléfono"
-          maxLength={10}
-          value={tutor.telefono}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="correoElectronico"
-          placeholder="Correo Electrónico"
-          maxLength={30}
-          value={tutor.correoElectronico}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Registrar Tutor</button>
-      </form>
-      <h2>Buscar Empresa</h2>
-      <input 
-        type="text" 
-        placeholder="Nombre de la empresa" 
-        value={empresa} 
-        onChange={(e) => setEmpresa(e.target.value)} 
-      />
-      <button onClick={buscarEmpresa}>Buscar</button>
-
-      {errorEmpresa && <p>{errorEmpresa}</p>}
-
-      {datosEmpresa.nombre_empresa && (
-        <div>
-          <h3>Datos de la Empresa</h3>
-          <p><b>Nombre:</b> {datosEmpresa.nombre_empresa}</p>
-          <p><b>Dirección:</b> {datosEmpresa.direccion}</p>
-          <p><b>Nombre de contacto:</b> {datosEmpresa.contacto_nombre}</p>
-          <p><b>Puesto de contacto:</b> {datosEmpresa.contacto_puesto}</p>
-          <p><b>Correo electrónico:</b> {datosEmpresa.correo_electronico}</p>
-          <p><b>Teléfono:</b> {datosEmpresa.telefono}</p>
-          <p><b>Página web:</b> {datosEmpresa.pagina_web}</p>
-          
-          <button onClick={subirEmpresa}>Subir a Vinculación</button>
+        <div className="form-group">
+          <input
+            type="text"
+            name="matricula"
+            placeholder="Matrícula"
+            value={nuevoEstudiante.matricula}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="text"
+            name="nombre"
+            placeholder="Nombre"
+            value={nuevoEstudiante.nombre}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="email"
+            name="correoElectronico"
+            placeholder="Correo Electrónico"
+            value={nuevoEstudiante.correoElectronico}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="tel"
+            name="telefono"
+            placeholder="Teléfono"
+            value={nuevoEstudiante.telefono}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            placeholder="Fecha de Nacimiento"
+            value={nuevoEstudiante.fecha_nacimiento}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="curp"
+            placeholder="CURP"
+            value={nuevoEstudiante.curp}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="genero"
+            placeholder="Género"
+            value={nuevoEstudiante.genero}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="division"
+            placeholder="División"
+            value={nuevoEstudiante.division}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="programa_estudios"
+            placeholder="Programa de Estudios"
+            value={nuevoEstudiante.programa_estudios}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="seguridad_social"
+            placeholder="Seguridad Social"
+            value={nuevoEstudiante.seguridad_social}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="text"
+            name="status"
+            placeholder="Status"
+            value={nuevoEstudiante.status}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <input
+            type="number"
+            name="cuatrimestre"
+            placeholder="Cuatrimestre"
+            value={nuevoEstudiante.cuatrimestre}
+            onChange={handleInputChange}
+            className="form-control mb-2"
+          />
+          <button type="submit" className="btn btn-primary btn-block">Registrar Estudiante</button>
         </div>
-      )}
-      
-      <h2>Registrar Tutor Externo</h2>
-      <form onSubmit={registrarTutorExterno}>
-        <input
-          type="text"
-          name="nombre_Tutor"
-          placeholder="Nombre del Tutor"
-          value={tutorExterno.nombre_Tutor}
-          onChange={handleInputChanges}
-          required
-        />
-        <input
-          type="text"
-          name="telefono_Tutor"
-          placeholder="Teléfono del Tutor"
-          value={tutorExterno.telefono_Tutor}
-          onChange={handleInputChanges}
-          required
-        />
-        <input
-          type="email"
-          name="correo_electronico_Tutor"
-          placeholder="Correo Electrónico del Tutor"
-          value={tutorExterno.correo_electronico_Tutor}
-          onChange={handleInputChanges}
-          required
-        />
-        <button type="submit">Registrar Tutor</button>
-        <h1></h1>
-        
-        <button onClick={handleLogout} className="logout-button">
-          Cerrar Sesión
-        </button>
       </form>
+      </div>
+      </div>
+
+      
+      <h2 className="text-center text-success mb-4">Lista de Estudiantes en BD Duale</h2>
+{estudiantes.length > 0 ? (
+  <div className="card">
+    <div className="card-header">
+      <h3 className="card-title">Estudiantes Registrados</h3>
     </div>
+    <div className="card-body">
+      <table className="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Matrícula</th>
+            <th>Nombre</th>
+            <th>Correo Electrónico</th>
+            <th>Teléfono</th>
+          </tr>
+        </thead>
+        <tbody>
+          {estudiantes.map((est) => (
+            <tr key={est.id}>
+              <td>{est.id}</td>
+              <td>{est.matricula}</td>
+              <td>{est.nombre}</td>
+              <td>{est.correoElectronico}</td>
+              <td>{est.telefono}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+) : (
+  <p>No hay estudiantes registrados en BD Duale.</p>
+)}
+
+<div className="container mt-5">
+  <div className="card">
+<h2 className="text-center text-success mb-4">Registrar Tutor Interno (UTP)</h2>
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    registrarTutor();
+  }}
+  className="form-horizontal"
+>
+  <div className="form-group">
+    <label htmlFor="nombre" className="col-sm-2 control-label">Nombre</label>
+    <div className="col-sm-10">
+      <input
+        type="text"
+        name="nombre"
+        placeholder="Nombre"
+        maxLength={50}
+        value={tutor.nombre}
+        onChange={handleChange}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="id" className="col-sm-2 control-label">ID</label>
+    <div className="col-sm-10">
+      <input
+        type="number"
+        name="id"
+        placeholder="ID"
+        maxLength={5}
+        value={tutor.id}
+        onChange={(e) => setTutor({ ...tutor, id: e.target.value })}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="telefono" className="col-sm-2 control-label">Teléfono</label>
+    <div className="col-sm-10">
+      <input
+        type="text"
+        name="telefono"
+        placeholder="Teléfono"
+        maxLength={10}
+        value={tutor.telefono}
+        onChange={handleChange}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="correoElectronico" className="col-sm-2 control-label">Correo Electrónico</label>
+    <div className="col-sm-10">
+      <input
+        type="email"
+        name="correoElectronico"
+        placeholder="Correo Electrónico"
+        maxLength={30}
+        value={tutor.correoElectronico}
+        onChange={handleChange}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <div className="col-sm-offset-2 col-sm-10">
+      <button type="submit" className="btn btn-primary btn-block">Registrar Tutor</button>
+    </div>
+  </div>
+</form>
+</div>
+</div>
+
+<div className="container mt-5">
+  <div className="card">
+<h2 className="text-center text-success mb-4">Buscar Empresa</h2>
+<div className="input-group">
+  <input 
+    type="text" 
+    className="form-control"
+    placeholder="Nombre de la empresa" 
+    value={empresa} 
+    onChange={(e) => setEmpresa(e.target.value)} 
+  />
+  <div className="input-group-append">
+    <button onClick={buscarEmpresa} className="btn btn-info">Buscar</button>
+  </div>
+</div>
+</div>
+</div>
+
+{errorEmpresa && <p className="text-danger">{errorEmpresa}</p>}
+
+{datosEmpresa.nombre_empresa && (
+  <div className="container mt-5">
+  <div className="card">
+  <div className="card mt-4">
+    <div className="card-header">
+      <h3 className="card-title">Datos de la Empresa</h3>
+    </div>
+    <div className="card-body">
+      <p><b>Nombre:</b> {datosEmpresa.nombre_empresa}</p>
+      <p><b>Dirección:</b> {datosEmpresa.direccion}</p>
+      <p><b>Nombre de contacto:</b> {datosEmpresa.contacto_nombre}</p>
+      <p><b>Puesto de contacto:</b> {datosEmpresa.contacto_puesto}</p>
+      <p><b>Correo electrónico:</b> {datosEmpresa.correo_electronico}</p>
+      <p><b>Teléfono:</b> {datosEmpresa.telefono}</p>
+      <p><b>Página web:</b> {datosEmpresa.pagina_web}</p>
+      <button onClick={subirEmpresa} className="btn btn-success">Subir a Vinculación</button>
+    </div>
+  </div>
+  </div>
+  </div>
+)}
+
+<div className="container mt-5">
+<div className="card">
+<h2 className="text-center text-success mb-4">Registrar Tutor Externo</h2>
+<form onSubmit={registrarTutorExterno} className="form-horizontal">
+  <div className="form-group">
+    <label htmlFor="nombre_Tutor" className="col-sm-2 control-label">Nombre del Tutor</label>
+    <div className="col-sm-10">
+      <input
+        type="text"
+        name="nombre_Tutor"
+        placeholder="Nombre del Tutor"
+        value={tutorExterno.nombre_Tutor}
+        onChange={handleInputChanges}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="telefono_Tutor" className="col-sm-2 control-label">Teléfono del Tutor</label>
+    <div className="col-sm-10">
+      <input
+        type="text"
+        name="telefono_Tutor"
+        placeholder="Teléfono del Tutor"
+        value={tutorExterno.telefono_Tutor}
+        onChange={handleInputChanges}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="correo_electronico_Tutor" className="col-sm-2 control-label">Correo Electrónico del Tutor</label>
+    <div className="col-sm-10">
+      <input
+        type="email"
+        name="correo_electronico_Tutor"
+        placeholder="Correo Electrónico del Tutor"
+        value={tutorExterno.correo_electronico_Tutor}
+        onChange={handleInputChanges}
+        required
+        className="form-control"
+      />
+    </div>
+  </div>
+
+  <div className="form-group">
+    <div className="col-sm-offset-2 col-sm-10">
+      <button type="submit" className="btn btn-primary btn-block">Registrar Tutor</button>
+    </div>
+  </div>
+</form>
+    </div>
+  </div>
+
+
+
+    </div>
+    </>
   );
 }
 
