@@ -369,7 +369,7 @@ const DashboardDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
 <div className="container mt-5">
   <div className="card">
 <h2 className="text-center text-success mb-4">Registrar Estudiante</h2>
-      <form onSubmit={registrarEstudiante}>
+      <form onSubmit={registrarEstudianteEnDuale}>
         <div className="form-group">
           <input
             type="text"
