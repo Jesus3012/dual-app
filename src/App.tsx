@@ -7,7 +7,6 @@ import DashboardAlumno from "./pages/DashboardAlumno";
 import DashboardTutorInterno from "./pages/DashboardTutorInterno";
 import DashboardTutorExterno from "./pages/DashboardTutorExterno";
 import DashboardVinculacion from "./pages/DashboardVinculacion";
-import Altas from "./pages/Altas";
 
 function App() {
   const [, setUserRole] = useState<string | null>(null);
@@ -15,8 +14,14 @@ function App() {
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
-    console.log("Role almacenado:", storedRole); // 🔍 Depuración
+    console.log("Role almacenado:", storedRole); // Depuración
     const token = localStorage.getItem("token");
+
+    const tutorExternoId = Number(localStorage.getItem("userId"));
+    console.log("ID del tutor externo:", tutorExternoId);
+
+    const tutorInternoId = Number(localStorage.getItem("userId"));
+    console.log("ID del tutor interno:", tutorInternoId);
   
     if (storedRole && token) {
       setUserRole(storedRole);
@@ -37,7 +42,6 @@ function App() {
             <Route path="/tutorExterno" element={<DashboardTutorExterno setUserRole={setUserRole} setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/vinculacion" element={<DashboardVinculacion setUserRole={setUserRole} setIsAuthenticated={setIsAuthenticated} />} />
           
-            <Route path="/altas" element={<Altas />} />
           </>
         ) : (
           <Route path="*" element={<Navigate to="/" />} />

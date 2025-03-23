@@ -87,15 +87,15 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
               >
                 <option value="Administrador">Administrador</option>
                 <option value="Director">Director</option>
-                <option value="TutorInterno">Tutor Interno</option>
-                <option value="TutorExterno">Tutor Externo</option>
                 <option value="Alumno">Alumno</option>
                 <option value="Vinculación">Vinculación</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-primary btn-block">
-              Registrar Usuario
-            </button>
+            <div className="text-center">
+              <button type="submit" className="btn btn-primary btn-lg">
+                Registrar Usuario
+              </button>
+            </div>
           </form>
 
           

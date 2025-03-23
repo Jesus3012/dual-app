@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../estilos/Login.css";  
-
+import "../estilos/Login.css";
 
 interface Props {
   setUserRole: (role: string | null) => void;
@@ -18,16 +17,18 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
     if (token && role) {
       setUserRole(role);
       setIsAuthenticated(true);
-      navigate(`/${role}`); // Redirige al Dashboard correspondiente
+      navigate(`/${role}`);
     }
   }, []);
 
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     try {
       const response = await fetch("http://localhost:3000/login", {
@@ -45,10 +46,11 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("userId", data.userId);
       setUserRole(data.role);
       setIsAuthenticated(true);
 
-      switch (data.role) {
+      switch (data.role.toLowerCase()) {
         case "administrador":
           navigate("/administrador");
           break;
@@ -58,10 +60,10 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
         case "alumno":
           navigate("/alumno");
           break;
-        case "tutorInterno":
+        case "tutorinterno":
           navigate("/tutorInterno");
           break;
-        case "tutorExterno":
+        case "tutorexterno":
           navigate("/tutorExterno");
           break;
         case "vinculacion":
@@ -72,7 +74,7 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
       }
     } catch (error) {
       console.error("Error en el login:", error);
-      setError("Error en el servidor");
+      setError("Error al conectar con el servidor. Verifica tu conexión.");
     }
   };
 
@@ -99,6 +101,7 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
             src="https://cdn.pixabay.com/video/2022/12/14/142931-781314466_large.mp4"
             type="video/mp4"
           />
+          
           Tu navegador no soporta la etiqueta de video.
         </video>
       </div>
@@ -107,7 +110,13 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
       <div className="login-box">
         <div className="card">
           <div className="card-header text-center">
-            <h3 className="login-title">Iniciar Sesión</h3>
+          <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5d9-kvwwJkXlfGTJKWDgHMespPVSeW0fABA&s"
+                className="img-circle elevation-2"
+                alt="User"
+                style={{ width: "120px", height: "120px" }} // Tamaño ajustado
+          />
+          <h3 className="login-title">Dual</h3>
           </div>
           <div className="card-body">
             {error && <div className="alert alert-danger">{error}</div>}
@@ -124,13 +133,22 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
               </div>
               <div className="input-group mb-3">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   className="form-control"
                   placeholder="Contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <div className="input-group-append">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+                  </button>
+                </div>
               </div>
               <button type="submit" className="btn btn-primary btn-block">
                 Ingresar
