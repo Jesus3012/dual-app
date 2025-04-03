@@ -26,6 +26,7 @@ interface Tutor {
   correoElectronico: string;
 }
 
+
 const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
   const [evaluaciones, setEvaluaciones] = useState<Evaluacion[]>([]);
@@ -36,6 +37,8 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [altasData, setAltasData] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [alertas, setAlertas] = useState<{ tipo: string, mensaje: string, id: number, duracion: number }[]>([]);
+  const [nextId, setNextId] = useState(1);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -98,8 +101,50 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
       .then(data => setTutors(data))
       .catch(error => console.error('Error al obtener los datos:', error));
 
-      
+      const obtenerAlertas = async () => {
+        try {
+          const response = await axios.get('http://localhost:3000/obtener_alertas');
+          const alertasConId = response.data.map((alerta: { tipo: string, mensaje: string }, index: number) => ({
+            ...alerta,
+            id: nextId + index,
+            duracion: alerta.tipo === 'Reinscripción' ? 6000 : 5000, 
+          }));
+          
+          // Evitar duplicación de alertas
+          setAlertas(prev => [
+            ...prev.filter((alerta) => !alertasConId.some((newAlerta: { id: number; }) => newAlerta.id === alerta.id)), // Filtramos alertas existentes
+            ...alertasConId,
+          ]);
+          setNextId(nextId + alertasConId.length);
+        } catch (error) {
+          console.error('Error al obtener las alertas:', error);
+        }
+      };
+  
+      obtenerAlertas();
   }, []);
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    // Establecer temporizadores para cada alerta
+    alertas.forEach((alerta) => {
+      const timer = setTimeout(() => {
+        handleDismiss(alerta.id);
+      }, alerta.duracion);
+      timers.push(timer);
+    });
+
+    // Limpiar los temporizadores cuando las alertas cambian o el componente se desmonte
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [alertas]);
+
+  const handleDismiss = (id: number) => {
+    setAlertas((prev) => prev.filter((alerta) => alerta.id !== id));
+  };
+
 
   const tutorExternoId = localStorage.getItem("userId");
   useEffect(() => {
@@ -139,6 +184,27 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
           <div className="card-body text-center p-4">
             <p className="lead">Bienvenido al panel del alumno. Aquí puedes ver tus evaluaciones.</p>
 
+            <div className="container">
+              <h4>Alertas Importantes:</h4>
+              <div className="alertas">
+                {alertas.map((alerta) => (
+                  <div
+                    key={alerta.id}
+                    className="alert alert-primary alert-dismissible fade show"
+                    role="alert"
+                    style={{ transition: 'opacity 0.5s ease' }}
+                  >
+                    <strong>{alerta.tipo}:</strong> {alerta.mensaje}
+                    <button
+                      type="button"
+                      className="btn-close"
+                      aria-label="Close"
+                      onClick={() => handleDismiss(alerta.id)}
+                    ></button>
+                  </div>
+                ))}
+              </div>
+            </div>
             {loading ? (
               <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
                 <div className="spinner-border text-primary" role="status">
@@ -244,64 +310,52 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
             </div>
           </div>
 
-          <div className="content-wrapper">
-            <div className="container-fluid">
-              <div className="row mb-3">
-                <div className="col-12">
-                  <div className="card shadow-sm rounded">
-                    <div className="card-header bg-info text-white">
-                      <h3 className="card-title">Datos de la Alta</h3>
-                    </div>
-                    <div className="card-body">
-                      {error && (
-                        <div className="alert alert-danger">{error}</div>
-                      )}
-                      {altasData.length === 0 ? (
-                        <div className="alert alert-info">
-                          No hay datos de alta registrados.
-                        </div>
-                      ) : (
-                        <div>
-                          <div className="table-responsive">
-                            <table className="table table-bordered table-hover table-striped">
-                              <thead className="thead-light">
-                                <tr>
-                                  <th>Puesto de Trabajo</th>
-                                  <th>Área</th>
-                                  <th>Nombre del Puesto</th>
-                                  <th>Objetivo del Puesto</th>
-                                  <th>Actividades / Etapas</th>
-                                  <th>Cuatrimestre</th>
-                                  <th>Asignatura</th>
-                                  <th>Unidad de Aprendizaje</th>
-                                  <th>Resultado de Aprendizaje</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {altasData.map((alta, index) => (
-                                  <tr key={index} className="table-hover">
-                                    <td>{alta.puesto_trabajo}</td>
-                                    <td>{alta.area}</td>
-                                    <td>{alta.nombre_puesto}</td>
-                                    <td>{alta.objetivo_puesto}</td>
-                                    <td>{alta.actividades_etapas}</td>
-                                    <td>{alta.cuatrimestre}</td>
-                                    <td>{alta.asignatura}</td>
-                                    <td>{alta.unidad_aprendizaje}</td>
-                                    <td>{alta.resultado_aprendizaje}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="card shadow-lg rounded-lg border-0">
+  <div className="card-header text-black">
+  <h2 className="card-title font-weight-bold">Datos de la Alta</h2>
+  </div>
+  <div className="card-body">
+    {altasData.length === 0 ? (
+      <div className="alert alert-info">
+        No hay datos de alta registrados.
+      </div>
+    ) : (
+      <div className="table-responsive mt-3"> {/* Aquí se añadió mt-3 para crear espacio arriba de la tabla */}
+        <table className="table table-bordered table-hover table-striped table-sm">
+          <thead className="thead-dark">
+            <tr>
+              <th>Puesto de Trabajo</th>
+              <th>Área</th>
+              <th>Nombre del Puesto</th>
+              <th>Objetivo del Puesto</th>
+              <th>Actividades / Etapas</th>
+              <th>Cuatrimestre</th>
+              <th>Asignatura</th>
+              <th>Unidad de Aprendizaje</th>
+              <th>Resultado de Aprendizaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            {altasData.map((alta, index) => (
+              <tr key={index} className="align-middle">
+                <td>{alta.puesto_trabajo || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.area || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.nombre_puesto || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.objetivo_puesto || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.actividades_etapas || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.cuatrimestre || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.asignatura || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.unidad_aprendizaje || <span className="text-muted">N/A</span>}</td>
+                <td>{alta.resultado_aprendizaje || <span className="text-muted">N/A</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+</div>
+
         </div>
       </div>
     </>
