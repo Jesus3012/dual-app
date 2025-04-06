@@ -79,63 +79,75 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
   };
 
   return (
-    
-    <div className="login-page">
-      {/* Contenedor del video de fondo */}
-      <div className="video-background">
-        <video
-          autoPlay
-          loop
-          muted
+      <div
+        className="login-page"
+        style={{
+          backgroundColor: "#f3e8ff",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "20px",
+        }}
+      >
+        <div
+          className="card"
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
             width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            zIndex: -1,
+            maxWidth: "420px",
+            padding: "clamp(20px, 5vw, 30px)",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            backgroundColor: "#fff",
           }}
         >
-          <source
-            src="https://cdn.pixabay.com/video/2022/12/14/142931-781314466_large.mp4"
-            type="video/mp4"
-          />
-          
-          Tu navegador no soporta la etiqueta de video.
-        </video>
-      </div>
-
-      {/* Caja de Login */}
-      <div className="login-box">
-        <div className="card">
-          <div className="card-header text-center">
-          <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5d9-kvwwJkXlfGTJKWDgHMespPVSeW0fABA&s"
-                className="img-circle elevation-2"
-                alt="User"
-                style={{ width: "120px", height: "120px" }} // Tamaño ajustado
-          />
-          <h3 className="login-title">Dual</h3>
+          <div className="text-center mb-4">
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5d9-kvwwJkXlfGTJKWDgHMespPVSeW0fABA&s"
+              alt="Logo"
+              className="img-circle elevation-2"
+              style={{ width: "120px", height: "120px" }}
+            />
+            <h3 className="mt-3" style={{ fontWeight: 600, fontSize: "1.5rem" }}>
+              Bienvenido a Dual
+            </h3>
+            <p style={{ color: "#888", fontSize: "0.9rem" }}>Inicia sesión para continuar</p>
           </div>
-          <div className="card-body">
-            {error && <div className="alert alert-danger">{error}</div>}
-            <form onSubmit={handleLogin}>
+    
+          {error && <div className="alert alert-danger">{error}</div>}
+    
+          <form onSubmit={handleLogin}>
+            <div className="form-group">
+              <label style={{ fontWeight: 500 }}>Usuario</label>
               <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                  <span className="input-group-text bg-light">
+                    <i className="fas fa-user" />
+                  </span>
+                </div>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Usuario"
+                  placeholder="Ingresa tu usuario"
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
                   required
                 />
               </div>
+            </div>
+    
+            <div className="form-group">
+              <label style={{ fontWeight: 500 }}>Contraseña</label>
               <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                  <span className="input-group-text bg-light">
+                    <i className="fas fa-lock" />
+                  </span>
+                </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   className="form-control"
-                  placeholder="Contraseña"
+                  placeholder="contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -146,19 +158,29 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
                     className="btn btn-outline-secondary"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+                    <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`} />
                   </button>
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-block">
-                Ingresar
-              </button>
-            </form>
-          </div>
+            </div>
+    
+            <button
+              type="submit"
+              className="btn btn-block"
+              style={{
+                backgroundColor: "#6a1b9a",
+                color: "#fff",
+                fontWeight: 500,
+                borderRadius: "8px",
+              }}
+            >
+              Ingresar
+            </button>
+          </form>
         </div>
       </div>
-    </div>
-  );
+    );
+  
 };
 
 export default Login;

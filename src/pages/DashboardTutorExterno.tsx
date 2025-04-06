@@ -30,6 +30,9 @@ interface Empresa {
 
 const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
+
+  const [alumnoAsignado, setAlumnoAsignado] = useState<{ id: number, nombre: string } | null>(null);
+  const [, setAlumnoAsignadoEva] = useState<{ id: number, nombre: string } | null>(null);
   const [openSeguimiento, setOpenSeguimiento] = useState(false);
   const [openEvaluacion, setOpenEvaluacion] = useState(false);
   const [retroalimentacion, setRetroalimentacion] = useState("");
@@ -46,16 +49,11 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const [estudiante, setEstudiante] = useState<any | null>(null);
   const [modalEstudianteAbierto, setModalEstudianteAbierto] = useState(false);
 
-  const [encuestas, setEncuestas] = useState<any[]>([]);
-  const [preguntas, setPreguntas] = useState<any[]>([]);
-  const [selectedEncuesta, setSelectedEncuesta] = useState<number | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  
   interface Estudiante {
     id: number;
     nombre: string;
   }
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [, setEstudiantes] = useState<Estudiante[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/estudiantes")
@@ -72,6 +70,31 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     navigate("/");
   };
 
+  useEffect(() => {
+    const fetchAlumnoAsignado = async () => {
+      const tutorId = localStorage.getItem("userId");
+  
+      if (!tutorId) return;
+  
+      try {
+        const response = await fetch(`http://localhost:3000/tutor_externo/${tutorId}/alumno`);
+        const data = await response.json();
+  
+        if (response.ok) {
+          setAlumnoAsignado(data);
+          setEstudianteSeleccionado(data.id); // importante para el seguimiento
+        } else {
+          console.error("Error al obtener alumno asignado:", data.error);
+        }
+      } catch (err) {
+        console.error("Error de red al obtener alumno asignado:", err);
+      }
+    };
+  
+    fetchAlumnoAsignado();
+  }, []);
+  
+
   const handleSaveSeguimiento = async () => {
     if (!estudianteSeleccionado || !retroalimentacion.trim() || !comentario.trim()) {
       alert("Todos los campos son obligatorios");
@@ -81,7 +104,6 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     const tutorExternoId = localStorage.getItem("userId");
 
     const seguimientoData = {
-      estudiante_id: estudianteSeleccionado,
       tutor_externo_id: tutorExternoId,
       retroalimentacion,
       comentario,
@@ -107,6 +129,29 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       console.error("Error al enviar la retroalimentación:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchAlumnoAsignado = async () => {
+      const tutorId = localStorage.getItem("userId");
+      if (!tutorId) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/tutor_externo/${tutorId}/alumno`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setAlumnoAsignadoEva(data);
+          setEstudianteSeleccionado(data.id); // importante para guardar evaluación
+        } else {
+          console.error("Error al obtener alumno asignado:", data.error);
+        }
+      } catch (error) {
+        console.error("Error al cargar alumno:", error);
+      }
+    };
+
+    fetchAlumnoAsignado();
+  }, []);
 
   const handleSaveEvaluacion = async () => {
     // Validamos que los campos no estén vacíos y que la calificación sea un número válido
@@ -203,73 +248,16 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     }
   };
 
-  useEffect(() => {
-    fetch("http://localhost:3000/encuestas")
-      .then((response) => response.json())
-      .then((data) => setEncuestas(data))
-      .catch((error) => console.error("Error al obtener encuestas:", error));
-  }, []);
-
-  const handleEncuestaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = Number(event.target.value);
-    setSelectedEncuesta(id);
-  };
-
-  const handleVerEncuesta = () => {
-    if (!selectedEncuesta) {
-      alert("Por favor, selecciona una encuesta.");
-      return;
-    }
-
-    fetch(`http://localhost:3000/preguntas/${selectedEncuesta}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setPreguntas(data);
-        setTimeout(() => setModalVisible(true), 0);
-      })
-      .catch((error) => console.error("Error al obtener preguntas:", error));
-  };
-  
-  const handleSubmitAnswers = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    
-    const answers = preguntas.map(pregunta => ({
-      id_pregunta: pregunta.id,
-      respuesta: formData.get(`answer_${pregunta.id}`)
-    }));
-  
-    const tutorExternoId = localStorage.getItem("userId");
-  
-    if (!tutorExternoId) {
-      alert("Error: No se encontró el ID del tutor.");
-      return;
-    }
-  
-    fetch('http://localhost:3000/respuestas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ encuestaId: selectedEncuesta, respuestas: answers, idTutor: tutorExternoId })
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(data => { throw new Error(data.error || 'Error al guardar las respuestas'); });
-        }
-        return response.json();
-      })
-      .then(data => {
-        alert(data.message);
-        setModalVisible(false);
-      })
-      .catch(error => {
-        alert(error.message); // Mostramos el mensaje de error en caso de que el tutor ya haya respondido
-        console.error('Error:', error);
-      });
-  };  
-
   return (
     <>
       <Navbar handleLogout={handleLogout} />
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #fdfbfb, #ebedee)',
+          padding: '2rem',
+        }}
+      >
       <div className="container mt-5">
         <div className="card">
           <div className="card-header bg-primary text-white">
@@ -298,20 +286,10 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
 
               <div className="modal-body">
                 <div className="form-group">
-                  <label>Seleccionar Alumno</label>
-                  <select
-                    className="form-control"
-                    value={estudianteSeleccionado}
-                    onChange={(e) => setEstudianteSeleccionado(e.target.value)}
-                  >
-                    <option value="">Seleccione un estudiante</option>
-                    {estudiantes.map((est) => (
-                      <option key={est.id} value={est.id}>
-                        {est.nombre}
-                      </option>
-                    ))}
-                  </select>
+                  <label>Alumno Asignado</label>
+                  <input className="form-control" value={alumnoAsignado?.nombre || "Cargando..."} disabled />
                 </div>
+
                 <div className="form-group">
                   <label>Retroalimentación</label>
                   <textarea className="form-control" value={retroalimentacion} onChange={(e) => setRetroalimentacion(e.target.value)} />
@@ -343,17 +321,15 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
               </div>
 
               <div className="modal-body">
-                <div className="form-group">
-                  <label>Seleccionar Alumno</label>
-                  <select className="form-control" value={estudianteSeleccionado} onChange={(e) => setEstudianteSeleccionado(e.target.value)}>
-                    <option value="">Seleccione un estudiante</option>
-                    {estudiantes.map((est) => (
-                      <option key={est.id} value={est.id}>
-                        {est.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="form-group">
+                <label>Alumno Asignado</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={alumnoAsignado?.nombre || "Cargando..."}
+                  disabled
+                />
+              </div>
                 <div className="form-group">
                   <label>Calificación (Portafolio de Evidencias)</label>
                   <input
@@ -568,68 +544,7 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
         )}
       </div>
     </div>
-
-    <div className="container mt-4">
-    <div className="card shadow">
-      <div className="card-header bg-dark text-white">Encuestas Disponibles</div>
-      <div className="card-body">
-        <div className="d-flex flex-column gap-2">
-          <select className="form-control" onChange={handleEncuestaChange}>
-            <option value="">Seleccione una encuesta</option>
-            {encuestas.map((encuesta) => (
-              <option key={encuesta.id} value={encuesta.id}>
-                {encuesta.nombre_encuesta}
-              </option>
-            ))}
-          </select>
-
-          <div>
-            <button 
-              className="btn btn-primary" 
-              onClick={handleVerEncuesta} 
-              disabled={!selectedEncuesta}
-            >
-              Ver preguntas
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* MODAL ADMINLTE */}
-      {modalVisible && (
-        <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">Preguntas de la Encuesta</h5>
-                <button type="button" className="btn-close" onClick={() => setModalVisible(false)}></button>
-              </div>
-              <div className="modal-body" style={{ maxHeight: "60vh", overflowY: "auto", paddingBottom: "10px" }}>
-                {preguntas.length > 0 ? (
-                  <form onSubmit={handleSubmitAnswers}>
-                    {preguntas.map((pregunta) => (
-                      <div className="mb-3" key={pregunta.id}>
-                        <label className="form-label">{pregunta.texto_pregunta}</label>
-                        <input type="text" name={`answer_${pregunta.id}`} className="form-control" required />
-                      </div>
-                    ))}
-                    <div className="modal-footer">
-                      <button type="submit" className="btn btn-success">
-                        Enviar respuestas
-                      </button>
-                      <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>
-                        Cerrar
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <p>No hay preguntas disponibles para esta encuesta.</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+   
     </div>
     </>
   );

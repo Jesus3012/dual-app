@@ -12,6 +12,8 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
   const [password, setPassword] = useState<string>("");
   const [rol, setRol] = useState<string>("Administrador");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,67 +45,94 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   return (
     <>
-    <Navbar handleLogout={handleLogout} />
-    <div className="container mt-5">
-      <div className="card">
-        <div className="card-header text-center">
-          <h3>Registrar Usuario</h3>
-        </div>
-        <div className="card-body">
+      <Navbar handleLogout={handleLogout} />
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #fdfbfb, #ebedee)',
+          padding: '2rem',
+        }}
+      >
+        <div
+          className="card border-0 shadow-sm"
+          style={{
+            width: '100%',
+            maxWidth: '900px',
+            borderRadius: '1.5rem',
+            background: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
+            padding: '2rem',
+          }}
+        >
+          <div className="text-center mb-4">
+            <h2 className="fw-bold" style={{ color: '#333' }}>Registrar Usuario</h2>
+            <p className="text-muted mb-0">Llena los siguientes campos para crear un nuevo usuario</p>
+          </div>
           <form onSubmit={handleSubmit}>
-            <div className="form-group mb-3">
-              <label htmlFor="usuario">Usuario</label>
+            <div className="mb-3">
+              <label htmlFor="usuario" className="form-label">Usuario</label>
               <input
                 type="text"
                 id="usuario"
-                className="form-control"
-                placeholder="Usuario"
+                className="form-control form-control-lg rounded-3"
+                placeholder="Ej. juanperez"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 required
               />
             </div>
-            <div className="form-group mb-3">
-              <label htmlFor="password">Contraseña</label>
-              <input
-                type="password"
-                id="password"
-                className="form-control"
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">Contraseña</label>
+              <div className="input-group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="form-control form-control-lg"
+                  placeholder="•••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+                </button>
+              </div>
             </div>
-            <div className="form-group mb-3">
-              <label htmlFor="rol">Rol</label>
+            <div className="mb-4">
+              <label htmlFor="rol" className="form-label">Rol</label>
               <select
                 id="rol"
-                className="form-control"
-                name="rol"
+                className="form-select form-select-lg rounded-3"
                 value={rol}
                 onChange={(e) => setRol(e.target.value)}
                 required
               >
+                <option value="">Selecciona un rol</option>
                 <option value="Administrador">Administrador</option>
                 <option value="Director">Director</option>
-                <option value="Alumno">Alumno</option>
                 <option value="Vinculación">Vinculación</option>
               </select>
             </div>
-            <div className="text-center">
-              <button type="submit" className="btn btn-primary btn-lg">
+            <div className="d-grid">
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg rounded-pill"
+              >
                 Registrar Usuario
               </button>
             </div>
           </form>
-
-          
         </div>
       </div>
-    </div>
     </>
   );
+  
 };
 
 export default DashboardAdmin;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-
 interface NavbarProps {
   handleLogout?: () => void;
 }
@@ -13,6 +12,44 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
     setRole(storedRole);
   }, []);
 
+  const getMenuItemsByRole = (role: string | null) => {
+    switch (role) {
+      case "administrador":
+        return [
+          { path: "/pages-Admin/alumnos", icon: "fas fa-user-graduate", label: "Alumnos" },
+          { path: "/configuraciones", icon: "fas fa-cogs", label: "Configuraciones" },
+          { path: "/reportes", icon: "fas fa-file-alt", label: "Reportes" },
+        ];
+      case "vinculacion":
+        return [
+          { path: "/alumnos", icon: "fas fa-user-graduate", label: "Alumnos" },
+          { path: "/pages-Vinculacion/Encuestas-Vinculacion", icon: "fas fa-poll", label: "Encuestas" },
+        ];
+      case "director":
+        return [
+          { path: "/pages-Director/Empresas-Director", icon: "fas fa-building", label: "Empresas" },
+          { path: "/pages-Director/Tutores-Director", icon: "fas fa-chalkboard-teacher", label: "Tutores" },
+          { path: "/pages-Director/Nuevos-Director", icon: "fas fa-user", label: "Nuevos usuarios" },
+        ];
+      case "alumno":
+        return [
+          { path: "/perfil", icon: "fas fa-user", label: "Mi Perfil" },
+          { path: "/pages-Alumno/Empresas-Alumno", icon: "fas fa-building", label: "Mis Empresas" },
+        ];
+      case "tutorInterno":
+        return [
+          
+        ];
+      case "tutorExterno":
+        return [
+          { path: "/mis-practicantes", icon: "fas fa-user-tie", label: "Practicantes" },
+          { path: "/pages-TutorExterno/Encuestas", icon: "fas fa-poll", label: "Encuestas" }
+        ];
+      default:
+        return [];
+    }
+  };
+  
   return (
     <div className="wrapper">
   {/* Sidebar */}
@@ -50,22 +87,18 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li className="nav-item">
             <Link to="/" className="nav-link">
-              <i className="nav-icon fas fa-home text-primary"></i>
+              <i className="nav-icon fas fa-home "></i>
               <p>Inicio</p>
             </Link>
           </li>
-          <li className="nav-item">
-            <Link to="/estudiantes" className="nav-link">
-              <i className="nav-icon fas fa-users text-success"></i>
-              <p>Estudiantes</p>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/empresas" className="nav-link">
-              <i className="nav-icon fas fa-building text-warning"></i>
-              <p>Empresas</p>
-            </Link>
-          </li>
+          {getMenuItemsByRole(role).map((item, index) => (
+            <li className="nav-item" key={index}>
+              <Link to={item.path} className="nav-link">
+                <i className={`nav-icon ${item.icon}`}></i>
+                <p>{item.label}</p>
+              </Link>
+            </li>
+          ))}
 
           {/* Botón de Cerrar Sesión */}
           <li className="nav-item">

@@ -9,6 +9,10 @@ interface Props {
 
 const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
+
+  const [alumnoAsignado, setAlumnoAsignado] = useState<{ id: number, nombre: string } | null>(null);
+  const [, setAlumnoAsignadoEvaluacion] = useState<{ id: number, nombre: string } | null>(null);
+
   const [open, setOpen] = useState(false);
   const [openEvaluacion, setOpenEvaluacion] = useState(false);
   const [retroalimentacion, setRetroalimentacion] = useState("");
@@ -35,7 +39,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     nombre: string;
   }
   
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [, setEstudiantes] = useState<Estudiante[]>([]);
 
   useEffect(() => {
       fetch("http://localhost:3000/estudiantes")
@@ -74,12 +78,6 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       }
     };
     
-    const handleSelectEstudiante = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setFormData((prevData) => ({
-        ...prevData,
-        estudianteAId: e.target.value,
-      }));
-    };
     
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -89,6 +87,29 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     navigate("/");
   };
 
+  useEffect(() => {
+    const fetchAlumnoAsignado = async () => {
+      const utpDirectorId = localStorage.getItem("userId");
+      if (!utpDirectorId) return;
+  
+      try {
+        const response = await fetch(`http://localhost:3000/utp_director/${utpDirectorId}/alumno`);
+        const data = await response.json();
+  
+        if (response.ok) {
+          setAlumnoAsignado(data);
+          setEstudianteSeleccionado(data.id); // para enviar al guardar
+        } else {
+          console.error("Error al obtener alumno asignado:", data.error);
+        }
+      } catch (error) {
+        console.error("Error al cargar alumno:", error);
+      }
+    };
+  
+    fetchAlumnoAsignado();
+  }, []);
+  
   const handleSave = async () => {
     if (!estudianteSeleccionado || !retroalimentacion.trim() || !comentario.trim()) {
       alert("Todos los campos son obligatorios");
@@ -122,6 +143,29 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       console.error("Error al enviar la retroalimentación:", error);
     }
   };
+ 
+  useEffect(() => {
+    const fetchAlumnoAsignado = async () => {
+      const utpDirectorId = localStorage.getItem("userId");
+      if (!utpDirectorId) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/utp_director/${utpDirectorId}/alumno`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setAlumnoAsignadoEvaluacion(data);
+          setEstudianteSeleccionado(data.id); // importante para guardar evaluación
+        } else {
+          console.error("Error al obtener alumno asignado:", data.error);
+        }
+      } catch (error) {
+        console.error("Error al cargar alumno:", error);
+      }
+    };
+
+    fetchAlumnoAsignado();
+  }, []);
 
   const handleSaveEvaluacion = async () => {
     if (!estudianteSeleccionado || !producto.trim()) {
@@ -155,18 +199,38 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     }
   };
 
+  const tutorInternoId = localStorage.getItem("userId");
+  const [, setAlumnoAsignadoAlta] = useState<{ id: number; nombre: string } | null>(null);
+
+  useEffect(() => {
+    // Llama al nuevo endpoint
+    fetch(`http://localhost:3000/utp_director/${tutorInternoId}/alumno`)
+      .then((res) => res.json())
+      .then((data) => {
+        setAlumnoAsignadoAlta(data); // data tiene { id, nombre }
+      })
+      .catch((error) => {
+        console.error("Error al obtener el alumno asignado:", error);
+      });
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const datosAlta = {
+      ...formData,
+      estudianteAId: alumnoAsignado?.id, // Usamos el ID obtenido
+    };
+
     fetch("http://localhost:3000/registrar-alta", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(datosAlta),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log("Alta registrada correctamente:", data);
+      .then(() => {
         alert("Alta registrada correctamente");
         setShowModal(false);
       })
@@ -178,6 +242,13 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   return (
     <>
   <Navbar handleLogout={handleLogout} />
+  <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #fdfbfb, #ebedee)',
+          padding: '2rem',
+        }}
+      >
   <div className="container mt-5">
     <div className="card">
       <div className="card-header bg-primary text-white">
@@ -186,10 +257,17 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       <div className="card-body">
         <p className="lead">Bienvenido al panel del tutor interno.</p>
         <p>En este panel podrás gestionar la información de los estudiantes asignados a tu tutoría.</p>
-        <button className="btn btn-success" onClick={() => setShowModal(true)}>Registrar Alta</button>
-        <button className="btn btn-primary ml-2" onClick={() => setOpen(true)}>Seguimiento de Avance</button>
-        {/* Botón para abrir la modal de evaluación */}
-        <button className="btn btn-info ml-2" onClick={() => setOpenEvaluacion(true)}>Registrar Evaluación</button>
+        <button className="btn btn-success" onClick={() => setShowModal(true)}>
+          <i className="fas fa-plus mr-2"></i> Registrar Alta
+        </button>
+
+        <button className="btn btn-primary ml-2" onClick={() => setOpen(true)}>
+          <i className="fas fa-tasks mr-2"></i> Seguimiento de Avance
+        </button>
+
+        <button className="btn btn-info ml-2" onClick={() => setOpenEvaluacion(true)}>
+          <i className="fas fa-clipboard-list mr-2"></i> Registrar Evaluación
+        </button>
       </div>
       <div className="card-footer text-right"></div>
     </div>
@@ -197,45 +275,37 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   <div>
   {/* Modal de formulario */}
   {showModal && (
-    <div className="modal fade show" style={{ display: "block" }} tabIndex={-1}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Registrar Alumno</h5>
-            <button
-              type="button"
-              className="close"
-              onClick={() => setShowModal(false)}
-            >
-              <span>&times;</span>
-            </button>
-          </div>
-          <div className="modal-body" style={{ maxHeight: "400px", overflowY: "auto" }}>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="estudianteAId">Selecciona Estudiante</label>
-                <select
-                  id="estudianteAId"
-                  name="estudianteAId"
-                  className="form-control"
-                  onChange={handleSelectEstudiante}
-                  required
-                >
-                  <option value="">Selecciona un estudiante</option>
-                  {estudiantes.map((estudiante) => (
-                    <option key={estudiante.id} value={estudiante.id}>
-                      {estudiante.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
+  <div className="modal fade show" style={{ display: "block" }} tabIndex={-1}>
+    <div className="modal-dialog modal-lg">
+      <div className="modal-content">
+        <div className="modal-header bg-dark text-white">
+          <h5 className="modal-title">
+            <i className="fas fa-user-plus me-2"></i>Registrar Alta de Alumno
+          </h5>
+          <button
+            type="button"
+            className="btn-close btn-close-white"
+            onClick={() => setShowModal(false)}
+          ></button>
+        </div>
 
-              {/* Otros campos del formulario */}
-              <div className="form-group">
-                <label htmlFor="puestoTrabajo">Puesto de Trabajo</label>
+        <div className="modal-body" style={{ maxHeight: "75vh", overflowY: "auto" }}>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="form-label fw-bold">Alumno asignado</label>
+              <input
+                type="text"
+                className="form-control"
+                value={alumnoAsignado ? alumnoAsignado.nombre : "Cargando..."}
+                disabled
+              />
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Puesto de Trabajo</label>
                 <input
                   type="text"
-                  id="puestoTrabajo"
                   name="puestoTrabajo"
                   className="form-control"
                   value={formData.puestoTrabajo}
@@ -243,11 +313,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="area">Área</label>
+
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Área</label>
                 <input
                   type="text"
-                  id="area"
                   name="area"
                   className="form-control"
                   value={formData.area}
@@ -255,11 +325,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="nombrePuesto">Nombre del Puesto</label>
+
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Nombre del Puesto</label>
                 <input
                   type="text"
-                  id="nombrePuesto"
                   name="nombrePuesto"
                   className="form-control"
                   value={formData.nombrePuesto}
@@ -267,11 +337,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="objetivoPuesto">Objetivo del Puesto</label>
+
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Objetivo del Puesto</label>
                 <input
                   type="text"
-                  id="objetivoPuesto"
                   name="objetivoPuesto"
                   className="form-control"
                   value={formData.objetivoPuesto}
@@ -279,11 +349,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="actividadesEtapas">Actividades / Etapas</label>
+
+              <div className="col-12 mb-3">
+                <label className="form-label">Actividades / Etapas</label>
                 <input
                   type="text"
-                  id="actividadesEtapas"
                   name="actividadesEtapas"
                   className="form-control"
                   value={formData.actividadesEtapas}
@@ -291,11 +361,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="cuatrimestre">Cuatrimestre</label>
+
+              <div className="col-md-4 mb-3">
+                <label className="form-label">Cuatrimestre</label>
                 <input
                   type="number"
-                  id="cuatrimestre"
                   name="cuatrimestre"
                   className="form-control"
                   value={formData.cuatrimestre}
@@ -305,11 +375,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="asignatura">Asignatura</label>
+
+              <div className="col-md-4 mb-3">
+                <label className="form-label">Asignatura</label>
                 <input
                   type="text"
-                  id="asignatura"
                   name="asignatura"
                   className="form-control"
                   value={formData.asignatura}
@@ -317,11 +387,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="unidadAprendizaje">Unidad de Aprendizaje</label>
+
+              <div className="col-md-4 mb-3">
+                <label className="form-label">Unidad de Aprendizaje</label>
                 <input
                   type="text"
-                  id="unidadAprendizaje"
                   name="unidadAprendizaje"
                   className="form-control"
                   value={formData.unidadAprendizaje}
@@ -329,11 +399,11 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="resultadoAprendizaje">Resultado de Aprendizaje</label>
+
+              <div className="col-12 mb-3">
+                <label className="form-label">Resultado de Aprendizaje</label>
                 <input
                   type="text"
-                  id="resultadoAprendizaje"
                   name="resultadoAprendizaje"
                   className="form-control"
                   value={formData.resultadoAprendizaje}
@@ -341,16 +411,19 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
                   required
                 />
               </div>
+            </div>
 
+            <div className="text-end mt-4">
               <button type="submit" className="btn btn-success">
-                Registrar Alta
+                <i className="fas fa-check-circle me-2"></i>Registrar Alta
               </button>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  )}
+  </div>
+)}
 </div>
 
   {open && (
@@ -365,19 +438,13 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
           </div>
           <div className="modal-body">
             <div className="form-group">
-              <label>Seleccionar Alumno</label>
-              <select
+              <label>Alumno Asignado</label>
+              <input
+                type="text"
                 className="form-control"
-                value={estudianteSeleccionado}
-                onChange={(e) => setEstudianteSeleccionado(e.target.value)}
-              >
-                <option value="">Seleccione un estudiante</option>
-                {estudiantes.map((est) => (
-                  <option key={est.id} value={est.id}>
-                    {est.nombre}
-                  </option>
-                ))}
-              </select>
+                value={alumnoAsignado?.nombre || "Cargando..."}
+                disabled
+              />
             </div>
             <div className="form-group">
               <label>Retroalimentación de avance</label>
@@ -412,27 +479,21 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header bg-info text-white">
-            <h5 className="modal-title">Registrar Evaluación</h5>
+            <h5 className=" modal-title">Registrar Evaluación</h5>
             <button type="button" className="close" onClick={() => setOpenEvaluacion(false)}>
               <span>&times;</span>
             </button>
           </div>
           
           <div className="modal-body">
-          <div className="form-group">
-              <label>Seleccionar Alumno</label>
-              <select
+            <div className="form-group">
+              <label>Alumno Asignado</label>
+              <input
+                type="text"
                 className="form-control"
-                value={estudianteSeleccionado}
-                onChange={(e) => setEstudianteSeleccionado(e.target.value)}
-              >
-                <option value="">Seleccione un estudiante</option>
-                {estudiantes.map((est) => (
-                  <option key={est.id} value={est.id}>
-                    {est.nombre}
-                  </option>
-                ))}
-              </select>
+                value={alumnoAsignado?.nombre || "Cargando..."}
+                disabled
+              />
             </div>
             <div className="form-group">
               <label>Calificacion (Producto de la Evaluación)</label>
@@ -464,8 +525,9 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </div> 
   )}
+  </div>
 </>
 
   );
