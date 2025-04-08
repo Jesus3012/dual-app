@@ -7,6 +7,8 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
+const API_URL = "http://localhost:3000";
+
 const NuevosDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState<string>("");
@@ -37,7 +39,7 @@ const NuevosDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
 
     const data = { usuario, password, rol };
 
-    fetch("http://localhost:3000/registrar-usuario", {
+    fetch(`${API_URL}/registrar-usuario`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

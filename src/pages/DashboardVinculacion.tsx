@@ -36,7 +36,7 @@ interface empresa {
   empresa_nombre: string;
 }
 
-
+const API_URL = "http://localhost:3000";
 
 const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
@@ -109,7 +109,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   const obtenerEstudiantes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/estudiantes");
+      const response = await axios.get(`${API_URL}/estudiantes`);
       setEstudiantes(response.data);
     } catch (err) {
       console.error("Error al obtener estudiantes:", err);
@@ -119,7 +119,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/registrar-vinculacion", formData);
+      const response = await axios.post(`${API_URL}/registrar-vinculacion`, formData);
       if (response.status === 201) {
         alert("Vinculación registrada correctamente.");
         setFormData({
@@ -168,7 +168,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
     useEffect(() => {
       const obtenerEmpresas = async () => {
         try {
-          const response = await axios.get('http://localhost:3000/obtener_empresas');
+          const response = await axios.get(`${API_URL}/obtener_empresas`);
           setEmpresas(response.data);
         } catch (error) {
           console.error('Error al obtener empresas:', error);
@@ -188,7 +188,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
     if (convenio) formData.append('convenio', convenio);
   
     try {
-      const response = await axios.post('http://localhost:3000/subir_documentos', formData, {
+      const response = await axios.post(`${API_URL}/subir_documentos`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -215,7 +215,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
 
     const handleDownloadConvenio = async (empresaNombre: string) => {
       try {
-        const response = await axios.get(`http://localhost:3000/descargar_convenio/${empresaNombre}`, {
+        const response = await axios.get(`${API_URL}/descargar_convenio/${empresaNombre}`, {
           responseType: 'blob', // Para recibir el archivo binario
         });
   
@@ -254,7 +254,7 @@ const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
       formData.append('carnet', carnetFile);
   
       // Realizar la solicitud para subir el carnet al servidor
-      const response = await fetch(`http://localhost:3000/upload-carnet/${idEstudiante}`, {
+      const response = await fetch(`${API_URL}/upload-carnet/${idEstudiante}`, {
         method: 'POST',
         body: formData,
       });

@@ -7,6 +7,8 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
+const API_URL = "http://localhost:3000";
+
 const EncuestasTutorE = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
    const [encuestas, setEncuestas] = useState<any[]>([]);
@@ -32,7 +34,7 @@ const EncuestasTutorE = ({ setUserRole, setIsAuthenticated }: Props) => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/encuestas")
+    fetch(`${API_URL}/encuestas`)
       .then((response) => response.json())
       .then((data) => setEncuestas(data))
       .catch((error) => console.error("Error al obtener encuestas:", error));
@@ -49,7 +51,7 @@ const EncuestasTutorE = ({ setUserRole, setIsAuthenticated }: Props) => {
       return;
     }
 
-    fetch(`http://localhost:3000/preguntas/${selectedEncuesta}`)
+    fetch(`${API_URL}/preguntas/${selectedEncuesta}`)
       .then((response) => response.json())
       .then((data) => {
         setPreguntas(data);
@@ -74,7 +76,7 @@ const EncuestasTutorE = ({ setUserRole, setIsAuthenticated }: Props) => {
       return;
     }
   
-    fetch('http://localhost:3000/respuestas', {
+    fetch(`${API_URL}/respuestas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ encuestaId: selectedEncuesta, respuestas: answers, idTutor: tutorExternoId })

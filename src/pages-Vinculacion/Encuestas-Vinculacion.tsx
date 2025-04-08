@@ -17,6 +17,8 @@ interface Respuesta {
   fecha_respuesta: string;
 }
 
+const API_URL = "http://localhost:3000";
+
 const EncuestasVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
   const [encuestas, setEncuestas] = useState<any[]>([]);
@@ -57,7 +59,7 @@ const EncuestasVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
     };
     const handleSubmitEncuesta = async () => {
       try {
-        await axios.post("http://localhost:3000/agregar_encuesta", {
+        await axios.post(`${API_URL}/agregar_encuesta`, {
           nombreEncuesta,
           descripcion,
           preguntas,
@@ -74,12 +76,12 @@ const EncuestasVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
 
     useEffect(() => {
         // Cargar encuestas
-        fetch('http://localhost:3000/encuestas')
+        fetch(`${API_URL}/encuestas`)
           .then((res) => res.json())
           .then((data) => setEncuestas(data));
     
         // Cargar tutores
-        fetch('http://localhost:3000/tutores')
+        fetch(`${API_URL}/tutores`)
           .then((res) => res.json())
           .then((data) => setTutores(data));
       }, []);
@@ -91,7 +93,7 @@ const EncuestasVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
         // Limpia los datos anteriores antes de la nueva consulta
         setEncuestaData([]);
       
-        const url = new URL('http://localhost:3000/api/respuestas');
+        const url = new URL(`${API_URL}/api/respuestas`);
         url.searchParams.append('idEncuesta', String(encuestaId));
       
         if (tutorId) {

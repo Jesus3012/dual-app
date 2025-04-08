@@ -24,6 +24,8 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
+const API_URL = "http://localhost:3000";
+
 const DashboardDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -70,7 +72,7 @@ const DashboardDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   
   // Llamar a la API al cargar el componente
   useEffect(() => {
-    fetch('http://localhost:3000/estudiantes')
+    fetch(`${API_URL}/estudiantes`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Error al obtener los estudiantes');
@@ -94,7 +96,7 @@ const DashboardDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
     setEstudianteEncontrado(null);
     setError(null);
 
-    fetch(`http://localhost:3000/buscar-estudiante/${matriculaBuscada}`)
+    fetch(`${API_URL}/buscar-estudiante/${matriculaBuscada}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Matrícula no encontrada");
@@ -131,7 +133,7 @@ const registrarManualmenteEnDuale = async () => {
       return;
   }
   try {
-      const response = await fetch('http://localhost:3000/registrar-manualmente-duale', {
+      const response = await fetch(`${API_URL}/registrar-manualmente-duale`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -176,7 +178,7 @@ const registrarManualmenteEnDuale = async () => {
     event.preventDefault(); // Evita recargar la página
 
     try {
-      const response = await fetch("http://localhost:3000/registrar-estudiante-duale", {
+      const response = await fetch(`${API_URL}/registrar-estudiante-duale`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoEstudiante),
@@ -552,9 +554,6 @@ const registrarManualmenteEnDuale = async () => {
                               <td>
                                 <button className="btn btn-primary btn-sm me-2">
                                   <i className="fas fa-edit"></i>
-                                </button>
-                                <button className="btn btn-danger btn-sm">
-                                  <i className="fas fa-trash"></i>
                                 </button>
                               </td>
                             </tr>

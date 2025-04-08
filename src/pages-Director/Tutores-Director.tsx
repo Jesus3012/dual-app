@@ -2,6 +2,9 @@ import { useEffect, useState} from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Select from "react-select"; // Importar react-select
+
+const API_URL = "http://localhost:3000";
 
 interface Props {
   setUserRole: (role: string | null) => void;
@@ -9,21 +12,21 @@ interface Props {
 }
 
 interface Estudiante {
-    id: number;
-    matricula: string;
-    nombre: string;
-    correo_electronico: string;
-    correoElectronico: string;
-    telefono: string;
-    fecha_nacimiento?: string;
-    curp?: string;
-    genero?: string;
-    division?: string;
-    programa_estudios?: string;
-    seguridad_social?: string;
-    status?: string;
-    cuatrimestre?: number;
-  }
+  id: number;
+  matricula: string;
+  nombre: string;
+  correo_electronico: string;
+  correoElectronico: string;
+  telefono: string;
+  fecha_nacimiento?: string;
+  curp?: string;
+  genero?: string;
+  division?: string;
+  programa_estudios?: string;
+  seguridad_social?: string;
+  status?: string;
+  cuatrimestre?: number;
+}
 
 const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
@@ -60,7 +63,7 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   const registrarTutor = () => {
     axios
-      .post("http://localhost:3000/registrar-tutor-interno", tutor)
+      .post(`${API_URL}/registrar-tutor-interno`, tutor)
       .then((response) => {
         alert(response.data.message);
         setTutor({
@@ -78,7 +81,7 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
       });
   };
   useEffect(() => {
-    fetch('http://localhost:3000/estudiantes')
+    fetch(`${API_URL}/estudiantes`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Error al obtener los estudiantes');
@@ -96,13 +99,17 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
       });
   }, []);
 
-  const handleChanges = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleChanges = (selectedOption: any) => {
     setTutor((prev) => ({
       ...prev,
-      [name]: name === "id_alumno" ? (value ? Number(value) : null) : value,
+      id_alumno: selectedOption ? selectedOption.value : null,
     }));
   };
+
+  const formatOptions = estudiantes.map((alumno) => ({
+    label: alumno.nombre,
+    value: alumno.id,
+  }));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTutor({ ...tutor, [e.target.name]: e.target.value });
@@ -114,9 +121,8 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
     correo_electronico_Tutor: '',
     usuario: '', 
     password: '',
-    id_alumno: '',
+    id_alumno: null,
   });
-  
 
   const handleInputChanges = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -126,11 +132,23 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   
     setTutorExterno((prev) => ({ ...prev, [name]: newValue }));
   };
+
+  const handleAlumnoSelect = (selectedOption: any) => {
+    setTutorExterno((prev) => ({
+      ...prev,
+      id_alumno: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
+  const formatOptions1 = estudiantes.map((alumno) => ({
+    label: alumno.nombre,
+    value: alumno.id,
+  }));
   
   
   
   const registrarTutorExterno = () => {
-    fetch("http://localhost:3000/tutores-externos", {
+    fetch(`${API_URL}/tutores-externos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tutorExterno),
@@ -144,7 +162,7 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
           correo_electronico_Tutor: "",
           usuario: "",
           password: "",
-          id_alumno: "",
+          id_alumno: null,
         });
       })
       .catch((error) => {
@@ -152,8 +170,7 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
         alert("Error al registrar tutor externo");
       });
   };
-
-
+  
   return (
     <>
       <Navbar handleLogout={handleLogout} />
@@ -276,19 +293,13 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
                       ) : error ? (
                         <div className="alert alert-danger">{error}</div>
                       ) : (
-                        <select
-                          name="id_alumno"
-                          className="form-control"
-                          value={tutor.id_alumno || ""}
+                        <Select
+                          options={formatOptions} // Formatear los estudiantes a la estructura que usa react-select
+                          value={formatOptions.find((option) => option.value === tutor.id_alumno)}
                           onChange={handleChanges}
-                        >
-                          <option value="">Seleccionar Alumno</option>
-                          {estudiantes.map((alumno) => (
-                            <option key={alumno.id} value={alumno.id}>
-                              {alumno.nombre}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder="Buscar alumno"
+                          isClearable={true}
+                        />
                       )}
                     </div>
 
@@ -397,22 +408,24 @@ const TutoresDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
             </div>
                 {/* Seleccionar Alumno */}
                 <div className="form-group">
-                  <label htmlFor="id_alumno">Seleccionar Alumno</label>
-                  <select
-                    name="id_alumno"
-                    value={tutorExterno.id_alumno || ""}
-                    onChange={handleInputChanges}
-                    className="form-control"
-                  >
-                    <option value="">Seleccione un alumno</option>
-                    {estudiantes.map((alumno) => (
-                      <option key={alumno.id} value={alumno.id}>
-                        {alumno.nombre}
-                      </option>
-                    ))}
-                  </select>
+                  <label htmlFor="id_alumno">Asignar Alumno</label>
+                  {loading ? (
+                        <div className="text-center">
+                          <i className="fa fa-spinner fa-spin"></i> Cargando...
+                        </div>
+                      ) : error ? (
+                        <div className="alert alert-danger">{error}</div>
+                      ) : (
+                  <Select
+                    options={formatOptions1}
+                    value={formatOptions1.find((option) => option.value === tutorExterno.id_alumno)}
+                    onChange={handleAlumnoSelect}
+                    placeholder="Buscar alumno"
+                    isClearable={true}
+                  />
+                )}
                 </div>
-
+                
                 {/* Botón de Registro */}
                 <div className="text-center">
                   <button type="submit" className="btn btn-primary btn-lg">

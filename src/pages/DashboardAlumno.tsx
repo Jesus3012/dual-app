@@ -26,6 +26,7 @@ interface Tutor {
   correoElectronico: string;
 }
 
+const API_URL = "http://localhost:3000";
 
 const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
@@ -79,11 +80,11 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:3000/evaluaciones/${tutorExternoId}`);
+        const response = await axios.get(`${API_URL}/evaluaciones/${tutorExternoId}`);
         setEvaluaciones(response.data);
 
         const seguimientoResponse = await axios.get<Seguimiento[]>(
-          `http://localhost:3000/seguimiento/${tutorExternoId}`
+          `${API_URL}/seguimiento/${tutorExternoId}`
         );
         setSeguimiento(seguimientoResponse.data);
       } catch (error) {
@@ -98,7 +99,7 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
     const idAlumno = localStorage.getItem('userId');
 
     if (idAlumno) {
-      fetch(`http://localhost:3000/mostrar-datos/tutor-interno/${idAlumno}`)
+      fetch(`${API_URL}/mostrar-datos/tutor-interno/${idAlumno}`)
         .then(response => response.json())
         .then(data => {
           if (data) {
@@ -110,7 +111,7 @@ const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
 
     const obtenerAlertas = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/obtener_alertas');
+        const response = await axios.get(`${API_URL}/obtener_alertas`);
         const alertasConId = response.data.map((alerta: { tipo: string, mensaje: string }, index: number) => ({
           ...alerta,
           id: nextId + index,

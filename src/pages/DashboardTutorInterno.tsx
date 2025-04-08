@@ -7,6 +7,8 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
+const API_URL = "http://localhost:3000";
+
 const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
 
@@ -42,7 +44,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const [, setEstudiantes] = useState<Estudiante[]>([]);
 
   useEffect(() => {
-      fetch("http://localhost:3000/estudiantes")
+      fetch(`${API_URL}/estudiantes`)
         .then((response) => response.json())
         .then((data) => setEstudiantes(data))
         .catch((error) => console.error("Error al cargar estudiantes:", error));
@@ -93,7 +95,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       if (!utpDirectorId) return;
   
       try {
-        const response = await fetch(`http://localhost:3000/utp_director/${utpDirectorId}/alumno`);
+        const response = await fetch(`${API_URL}/utp_director/${utpDirectorId}/alumno`);
         const data = await response.json();
   
         if (response.ok) {
@@ -125,7 +127,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       comentario,
     };
     try {
-      const response = await fetch("http://localhost:3000/seguimiento", {
+      const response = await fetch(`${API_URL}/seguimiento`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(seguimientoData),
@@ -150,7 +152,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       if (!utpDirectorId) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/utp_director/${utpDirectorId}/alumno`);
+        const response = await fetch(`${API_URL}/utp_director/${utpDirectorId}/alumno`);
         const data = await response.json();
 
         if (response.ok) {
@@ -182,7 +184,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/evaluaciones", {
+      const response = await fetch(`${API_URL}/evaluaciones`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(evaluacionData),
@@ -204,7 +206,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   useEffect(() => {
     // Llama al nuevo endpoint
-    fetch(`http://localhost:3000/utp_director/${tutorInternoId}/alumno`)
+    fetch(`${API_URL}/utp_director/${tutorInternoId}/alumno`)
       .then((res) => res.json())
       .then((data) => {
         setAlumnoAsignadoAlta(data); // data tiene { id, nombre }
@@ -222,7 +224,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
       estudianteAId: alumnoAsignado?.id, // Usamos el ID obtenido
     };
 
-    fetch("http://localhost:3000/registrar-alta", {
+    fetch(`${API_URL}/registrar-alta`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

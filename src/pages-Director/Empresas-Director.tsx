@@ -43,6 +43,8 @@ interface Estudiante {
   cuatrimestre?: number;
 }
 
+const API_URL = "http://localhost:3000";
+
 const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
 
@@ -82,7 +84,7 @@ const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/estudiantes')
+    fetch(`${API_URL}/estudiantes`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Error al obtener los estudiantes');
@@ -102,7 +104,7 @@ const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/empresas")
+      .get(`${API_URL}/empresas`)
       .then((response) => {
         setEmpresas(response.data);
         setLoading(false);
@@ -116,7 +118,7 @@ const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   const buscarEmpresa = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/empresa/${empresa}`);
+      const response = await fetch(`${API_URL}/empresa/${empresa}`);
       if (!response.ok) {
         throw new Error("Empresa no encontrada");
       }
@@ -149,7 +151,7 @@ const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
     if (!datosEmpresa.nombre_empresa) return alert("Primero busca una empresa");
   
     try {
-      const response = await fetch("http://localhost:3000/subir-empresa", {
+      const response = await fetch(`${API_URL}/subir-empresa`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(datosEmpresa),
@@ -188,7 +190,7 @@ const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
     }
 
     axios
-      .put("http://localhost:3000/asignar-estudiante", {
+      .put(`${API_URL}/asignar-estudiante`, {
         id_empresa,
         id_estudiante,
       })

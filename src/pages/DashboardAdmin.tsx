@@ -50,15 +50,14 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
         className="d-flex justify-content-center align-items-center"
         style={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #fdfbfb, #ebedee)',
+          background: 'linear-gradient(135deg,rgb(166, 166, 166),rgb(236, 217, 231))',
           padding: '2rem',
         }}
       >
         <div
           className="card border-0 shadow-sm"
           style={{
-            width: '100%',
-            maxWidth: '900px',
+            width: '50%',
             borderRadius: '1.5rem',
             background: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(10px)',

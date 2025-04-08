@@ -7,6 +7,8 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
+const API_URL = "http://localhost:3000";
+
 const EmpresasAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
   const [altasData, setAltasData] = useState<any[]>([]);
@@ -32,7 +34,7 @@ const EmpresasAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
    const tutorExternoId = localStorage.getItem("userId");
     useEffect(() => {
       if (tutorExternoId) {
-        fetch(`http://localhost:3000/altas/${tutorExternoId}`)
+        fetch(`${API_URL}/altas/${tutorExternoId}`)
           .then((response) => response.json())
           .then((data) => setAltasData(data))
           .catch((error) => {
@@ -52,7 +54,7 @@ const EmpresasAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
       if (!idAlumno) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/empresa-vinculada?idAlumno=${idAlumno}`);
+        const response = await fetch(`${API_URL}/api/empresa-vinculada?idAlumno=${idAlumno}`);
         if (!response.ok) {
           throw new Error('No se pudo obtener la empresa');
         }

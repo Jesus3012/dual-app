@@ -17,12 +17,12 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
       case "administrador":
         return [
           { path: "/pages-Admin/alumnos", icon: "fas fa-user-graduate", label: "Alumnos" },
-          { path: "/configuraciones", icon: "fas fa-cogs", label: "Configuraciones" },
-          { path: "/reportes", icon: "fas fa-file-alt", label: "Reportes" },
+          { path: "/pages-Admin/tutores", icon: "fas fa-chalkboard-teacher", label: "Tutores" },
+          
         ];
       case "vinculacion":
         return [
-          { path: "/alumnos", icon: "fas fa-user-graduate", label: "Alumnos" },
+          // { path: "/alumnos", icon: "fas fa-user-graduate", label: "Alumnos" },
           { path: "/pages-Vinculacion/Encuestas-Vinculacion", icon: "fas fa-poll", label: "Encuestas" },
         ];
       case "director":
@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
         ];
       case "alumno":
         return [
-          { path: "/perfil", icon: "fas fa-user", label: "Mi Perfil" },
+          // { path: "/perfil", icon: "fas fa-user", label: "Mi Perfil" },
           { path: "/pages-Alumno/Empresas-Alumno", icon: "fas fa-building", label: "Mis Empresas" },
         ];
       case "tutorInterno":
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
         ];
       case "tutorExterno":
         return [
-          { path: "/mis-practicantes", icon: "fas fa-user-tie", label: "Practicantes" },
+          // { path: "/mis-practicantes", icon: "fas fa-user-tie", label: "Practicantes" },
           { path: "/pages-TutorExterno/Encuestas", icon: "fas fa-poll", label: "Encuestas" }
         ];
       default:
