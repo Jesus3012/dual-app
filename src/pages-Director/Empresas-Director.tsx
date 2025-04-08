@@ -43,7 +43,7 @@ interface Estudiante {
   cuatrimestre?: number;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://modelodual.utpuebla.edu.mx";
 
 const EmpresasDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();

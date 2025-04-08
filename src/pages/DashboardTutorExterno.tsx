@@ -8,7 +8,7 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://modelodual.utpuebla.edu.mx";
 
 interface Empresa {
   id: number;
@@ -155,7 +155,7 @@ const DashboardTutorExterno = ({ setUserRole, setIsAuthenticated }: Props) => {
 
   const handleSaveEvaluacion = async () => {
     // Validamos que los campos no estén vacíos y que la calificación sea un número válido
-    if (!estudianteSeleccionado || !portafolio_evidencias.trim()) {
+    if ( !portafolio_evidencias.trim()) {
       alert("Todos los campos son obligatorios y la calificación debe estar entre 0 y 10");
       return;
     }

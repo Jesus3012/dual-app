@@ -36,7 +36,7 @@ interface empresa {
   empresa_nombre: string;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://modelodual.utpuebla.edu.mx";
 
 const DashboardVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();

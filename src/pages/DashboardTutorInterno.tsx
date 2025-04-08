@@ -7,7 +7,7 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://modelodual.utpuebla.edu.mx";
 
 const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
@@ -170,7 +170,7 @@ const DashboardTutorInterno = ({ setUserRole, setIsAuthenticated }: Props) => {
   }, []);
 
   const handleSaveEvaluacion = async () => {
-    if (!estudianteSeleccionado || !producto.trim()) {
+    if ( !producto.trim()) {
       alert("Todos los campos de la evaluación son obligatorios");
       return;
     }

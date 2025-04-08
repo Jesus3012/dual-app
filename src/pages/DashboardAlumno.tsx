@@ -26,7 +26,7 @@ interface Tutor {
   correoElectronico: string;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://modelodual.utpuebla.edu.mx";
 
 const DashboardAlumno = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();
