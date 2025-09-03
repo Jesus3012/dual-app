@@ -7,7 +7,7 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
-const API_URL = "https://modelodual.utpuebla.edu.mx";
+const API_URL = "http://localhost:3000";
 
 const NuevosDirector = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();

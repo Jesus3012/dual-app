@@ -8,7 +8,7 @@ interface Props {
   setIsAuthenticated: (auth: boolean) => void;
 }
 
-const API_URL = "https://modelodual.utpuebla.edu.mx";
+const API_URL = "http://localhost:3000";
 
 interface Empresa {
   id: number;

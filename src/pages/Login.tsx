@@ -31,7 +31,7 @@ const Login = ({ setUserRole, setIsAuthenticated }: Props) => {
     setError("");
 
     try {
-      const response = await fetch("https://modelodual.utpuebla.edu.mx/login", {
+      const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario, password }),

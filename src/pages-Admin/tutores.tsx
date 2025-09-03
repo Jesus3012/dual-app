@@ -23,7 +23,7 @@ interface TutorExterno {
     id_alumno: number | null;
   }
 
-  const API_URL = "https://modelodual.utpuebla.edu.mx";
+  const API_URL = "http://localhost:3000";
 
 const Tutores = ({ setUserRole, setIsAuthenticated }: any) => {
   const navigate = useNavigate();

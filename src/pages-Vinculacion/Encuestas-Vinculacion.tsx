@@ -17,7 +17,7 @@ interface Respuesta {
   fecha_respuesta: string;
 }
 
-const API_URL = "https://modelodual.utpuebla.edu.mx";
+const API_URL = "http://localhost:3000";
 
 const EncuestasVinculacion = ({ setUserRole, setIsAuthenticated }: Props) => {
   const navigate = useNavigate();

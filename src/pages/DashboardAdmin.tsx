@@ -20,7 +20,7 @@ const DashboardAdmin = ({ setUserRole, setIsAuthenticated }: Props) => {
 
     const data = { usuario, password, rol };
 
-    fetch("https://modelodual.utpuebla.edu.mx/registrar-usuario", {
+    fetch("http://localhost:3000/registrar-usuario", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

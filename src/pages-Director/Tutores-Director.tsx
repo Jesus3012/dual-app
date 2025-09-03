@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select"; // Importar react-select
 
-const API_URL = "https://modelodual.utpuebla.edu.mx";
+const API_URL = "http://localhost:3000";
 
 interface Props {
   setUserRole: (role: string | null) => void;
